@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { UserValidation } from '@/lib/validations/user'
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Form,
   FormControl,
@@ -19,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { ChangeEvent, useState } from 'react';
 import { isBase64Image } from '@/lib/utils';
 import { useUploadThing } from '@/lib/uploadthing'
+import { updateUser } from '@/lib/actions/user.action';
 
 interface Props{
     user:{
@@ -34,6 +36,8 @@ interface Props{
 const AccountProfile = ({user, btnTitle}:Props) => {
     const [files, setFiles] = useState<File[]>([]);
     const { startUpload } = useUploadThing("media");
+    const router = useRouter();
+    const pathname = usePathname();
 
     const form = useForm({
         resolver:zodResolver(UserValidation),
@@ -81,6 +85,21 @@ const AccountProfile = ({user, btnTitle}:Props) => {
         }
 
         //TODO: Update user Profile
+        await updateUser({
+          username: values.username,
+          name: values.name,
+          bio: values.bio,
+          image: values.profile_photo,
+          userId: user.id,
+          path: pathname
+        });
+
+        if(pathname === '/profile/edit'){
+          router.back();//go to prev page
+
+        }else{
+          router.push('/'); //go from onboarding to /
+        }
       }
 
       
