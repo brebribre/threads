@@ -26,7 +26,6 @@ async function Page(){
             <AccountProfile 
                 user={userData}
                 btnTitle = "Continue"
-            
             />
         </section>
     </main>
